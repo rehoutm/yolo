@@ -10,7 +10,7 @@ export default class AuthenticationMiddleware {
         this.jwtSecret = Settings.jwtSecret;
     }
 
-    Handle (req: Request, res: Response, next: NextFunction) : void {
+    Handle(req: Request, res: Response, next: NextFunction): void {
         const authHeader = <string>req.headers["authorization"];
         if (!authHeader) {
             res.status(401).send({ error: "Authorization header missing" });
@@ -29,7 +29,7 @@ export default class AuthenticationMiddleware {
             if (e instanceof jwt.JsonWebTokenError) {
                 res.status(401).send({ error: "Invalid token" });
             } else if (e instanceof jwt.NotBeforeError) {
-                res.status(401).send(`Token is not valid before ${e.date}`);
+                res.status(401).send({ error: `Token is not valid before ${e.date}` });
             } else if (e instanceof jwt.TokenExpiredError) {
                 const date = new Date(e.expiredAt * 1000);
                 res.status(401).send({ error: `Token expired at ${date}` });
