@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import jwtAuthenticator from "./jwtAuthenticator";
+import jwtAuthenticator from "./JWTAuthenticator";
 
 class App {
 

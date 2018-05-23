@@ -1,6 +1,6 @@
 import Password from "./Password";
 
-class User {
+export default class User {
 
     async Add(email: string, password: string) : Promise<void> {
     }
