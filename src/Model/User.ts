@@ -7,15 +7,16 @@ export default class User {
 
     async Login(email: string, passwordInput: string) : Promise<boolean> {
         const storedHash = await this.ReadPasswordHash(email);
-        if (!storedHash) {
+        if (storedHash === null) {
             return false;
         }
         const password = new Password();
-        return password.Verify(passwordInput, storedHash)
+        return await password.Verify(passwordInput, storedHash);
     }
 
     private async ReadPasswordHash(email: string) : Promise<string> {
         //TODO login against adatabase
-        return email === "test@yolo.app" ? Promise.resolve("test") : null;
+        const password = new Password();
+        return email === "test@yolo.app" ? Promise.resolve(password.GenerateHash("test")) : null;
     }
 }
