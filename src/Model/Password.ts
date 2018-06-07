@@ -1,4 +1,4 @@
-import * as argon2 from "argon2";
+import { verify as argonVerify, hash as argonHash } from "argon2";
 import Settings from "../Settings";
 
 export default class Password {
@@ -11,15 +11,12 @@ export default class Password {
 
     async Verify(password: string, hash: string): Promise<boolean> {
         const seasonedPwd = this.GetSeasoned(password);
-        console.log(seasonedPwd);
-        console.log(hash);
-        return await argon2.verify(hash, seasonedPwd);
+        return await argonVerify(hash, seasonedPwd);
     }
 
     async GenerateHash(password: string): Promise<string> {
         const seasonedPwd = this.GetSeasoned(password);
-        console.log(seasonedPwd);
-        return await argon2.hash(seasonedPwd);
+        return await argonHash(seasonedPwd);
     }
 
     private GetSeasoned(password: string): string {

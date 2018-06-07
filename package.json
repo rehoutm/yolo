@@ -11,10 +11,12 @@
   "dependencies": {
     "@types/express": "^4.11.1",
     "@types/jsonwebtoken": "^7.2.7",
+    "@types/nedb": "^1.8.5",
     "argon2": "^0.19.2",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
-    "jsonwebtoken": "^8.2.1"
+    "jsonwebtoken": "^8.2.1",
+    "nedb": "^1.8.0"
   },
   "devDependencies": {
     "grunt": "^1.0.2",

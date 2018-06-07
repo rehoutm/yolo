@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import * as jwt from "jsonwebtoken";
+import { verify as jwtVerify, JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
 import Settings from "../Settings";
 
 export default class AuthenticationMiddleware {
@@ -22,15 +22,15 @@ export default class AuthenticationMiddleware {
             return;
         }
         try {
-            req.user = jwt.verify(headerParts[1], this.jwtSecret);
+            req.user = jwtVerify(headerParts[1], this.jwtSecret);
             next();
         } catch (e) {
             console.log(e);
-            if (e instanceof jwt.JsonWebTokenError) {
+            if (e instanceof JsonWebTokenError) {
                 res.status(401).send({ error: "Invalid token" });
-            } else if (e instanceof jwt.NotBeforeError) {
+            } else if (e instanceof NotBeforeError) {
                 res.status(401).send({ error: `Token is not valid before ${e.date}` });
-            } else if (e instanceof jwt.TokenExpiredError) {
+            } else if (e instanceof TokenExpiredError) {
                 const date = new Date(e.expiredAt * 1000);
                 res.status(401).send({ error: `Token expired at ${date}` });
             } else {

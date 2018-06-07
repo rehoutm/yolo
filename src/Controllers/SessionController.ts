@@ -1,21 +1,19 @@
 import { Request, Response } from "express";
+import { sign as jwtSign } from "jsonwebtoken";
 import User from "../Model/User";
-import * as jwt from "jsonwebtoken";
 import Settings from "../Settings";
 
 export default class SessionController {
 
-    private user: User;
     private jwtSecret: string;
 
     constructor() {
-        this.user = new User();
         this.jwtSecret = Settings.jwtSecret;
     }
 
     async HandlePost(req: Request, res: Response) {
         try {
-            if (await this.user.Login(req.body.email, req.body.password)) {
+            if (await User.CheckPassword(req.body.email, req.body.password)) {
                 res.status(201).set("Authorization", `Bearer ${await this.CreateToken(req.body.email)}`).send();
             } else {
                 res.status(401).send({ error: "Invalid credentials" });
@@ -27,7 +25,7 @@ export default class SessionController {
     }
 
     private CreateToken(email: string): string {
-        return jwt.sign({ email: email }, this.jwtSecret, {
+        return jwtSign({ email: email }, this.jwtSecret, {
             expiresIn: 3600
         });
     }
