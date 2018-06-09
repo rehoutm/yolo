@@ -2,6 +2,7 @@ import Password from "./Password";
 import * as Datastore from "nedb";
 import Settings from "../Settings";
 import { promisify } from "util";
+import * as uuid from "uuid/v4";
 
 type UserRecord = {
     email: string;
@@ -38,7 +39,8 @@ class User {
         const passwordHash = await this.password.GenerateHash(password);
         await promisify<UserRecord, UserRecord>(this.database.insert).bind(this.database)({
             email: email,
-            passwordHash: passwordHash
+            passwordHash: passwordHash,
+            uid: uuid()
         });
     }
 
