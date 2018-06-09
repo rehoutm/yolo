@@ -2,6 +2,7 @@ keys/
 .vs/
 .tscache/
 dist/
+tmp/
 
 ##########################
 https://github.com/github/gitignore/blob/master/Node.gitignore
