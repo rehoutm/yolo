@@ -16,7 +16,7 @@ class UsersRouter {
         this.registrationController = new RegistrationController();
         this.router.post("/session", [
             body("email").isEmail(),
-            body("password").not().isEmpty(),
+            body("password").not().isEmpty().isLength({ min: 4 }),
             HandleErrors
         ], async (req, res) => await this.sessionController.HandlePost(req, res));
         this.router.post("/registration", [
