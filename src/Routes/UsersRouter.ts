@@ -15,15 +15,16 @@ class UsersRouter {
         this.sessionController = new SessionController();
         this.registrationController = new RegistrationController();
         this.router.post("/session", [
-            body("email").isEmail(),
-            body("password").not().isEmpty().isLength({ min: 4 }),
+            body("email", "Valid email address is required").isEmail(),
+            body("password", "Password is required").not().isEmpty(),
             HandleErrors
         ], async (req, res) => await this.sessionController.HandlePost(req, res));
         this.router.post("/registration", [
-            body("email").isEmail(),
-            body("password").not().isEmpty(),
+            body("email", "Valid email address is required").isEmail(),
+            body("password", "Password is required").not().isEmpty(),
+            body("password", "Password must have minimum of 4 characters").isLength({ min: 4 }),
             body("passwordCheck").custom((value, options) => {
-                if (value !== options.req.body.password) {
+                if (!options.req.body.password || value !== options.req.body.password) {
                     throw new Error("Passwords do not match");
                 } else {
                     return value;
