@@ -7,6 +7,7 @@ import * as uuid from "uuid/v4";
 type UserRecord = {
     email: string;
     passwordHash: string;
+    uid: string;
 }
 
 class User {
@@ -44,25 +45,28 @@ class User {
         });
     }
 
-    async CheckPassword(email: string, password: string): Promise<boolean> {
+    async Login(email: string, password: string): Promise<UserRecord> {
         if (!email || !password) {
-            return false;
+            return null;
         }
-        const storedHash = await this.ReadPasswordHash(email);
-        if (storedHash === null) {
-            return false;
+        const userRecord = await this.GetUserRecord(email);
+        if (userRecord === null) {
+            return null;
         }
-        return await this.password.Verify(password, storedHash);
+        if (await this.password.Verify(password, userRecord.passwordHash)) {
+            return userRecord;
+        }
+        return null;
     }
 
-    private async ReadPasswordHash(email: string): Promise<string> {
+    private async GetUserRecord(email: string): Promise<UserRecord> {
         await this.Initialize();
-        const user = await promisify(this.ReadPasswordHashInternal).bind(this)(email);
-        return user === null ? null : user.passwordHash;
+        const user = await promisify(this.GetUserRecordInternal).bind(this)(email);
+        return user === null ? null : user;
     }
 
     //little hack to work around promisify not able to infere the right overload
-    private ReadPasswordHashInternal(email: string, callback: (err: Error, document: UserRecord) => void): void {
+    private GetUserRecordInternal(email: string, callback: (err: Error, document: UserRecord) => void): void {
         this.database.findOne<UserRecord>({ email: email }, callback);
     }
 }
