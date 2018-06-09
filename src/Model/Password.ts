@@ -1,7 +1,7 @@
 import { verify as argonVerify, hash as argonHash } from "argon2";
 import Settings from "../Settings";
 
-export default class Password {
+class Password {
 
     private pepper: string;
 
@@ -23,3 +23,5 @@ export default class Password {
         return password + this.pepper;
     }
 }
+
+export default new Password();

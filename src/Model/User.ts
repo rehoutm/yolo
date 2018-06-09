@@ -14,10 +14,9 @@ class User {
 
     private database: Nedb;
     private initialized: boolean;
-    private password: Password;
 
     constructor() {
-        this.password = new Password();
+
         //persisted DB is not working on WSL...
         if (Settings.userDatabaseFile == "memory") {
             this.database = new Datastore();
@@ -37,7 +36,7 @@ class User {
 
     async Add(email: string, password: string): Promise<void> {
         await this.Initialize();
-        const passwordHash = await this.password.GenerateHash(password);
+        const passwordHash = await Password.GenerateHash(password);
         await promisify<UserRecord, UserRecord>(this.database.insert).bind(this.database)({
             email: email,
             passwordHash: passwordHash,
@@ -53,7 +52,7 @@ class User {
         if (userRecord === null) {
             return null;
         }
-        if (await this.password.Verify(password, userRecord.passwordHash)) {
+        if (await Password.Verify(password, userRecord.passwordHash)) {
             return userRecord;
         }
         return null;
