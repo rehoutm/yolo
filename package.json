@@ -15,6 +15,7 @@
     "argon2": "^0.19.3",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
+    "express-validator": "^5.2.0",
     "jsonwebtoken": "^8.2.2",
     "nedb": "^1.8.0"
   },
