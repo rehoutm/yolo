@@ -1,7 +1,7 @@
 import { Router } from "express";
 import SessionController from "../Controllers/SessionController";
 import RegistrationController from "../Controllers/RegistrationController";
-import { body, validationResult } from "express-validator/check";
+import { body } from "express-validator/check";
 import { HandleErrors } from "../Middleware/ValidationErrorsHandler";
 
 class UsersRouter {

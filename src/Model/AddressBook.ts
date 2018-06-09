@@ -1,4 +1,5 @@
-import { database as fbDatabase } from "firebase-admin";
+import Firebase from "../Firebase";
+import { firestore } from "firebase-admin";
 
 export type Contact = {
     name: string,
@@ -8,16 +9,16 @@ export type Contact = {
 
 class AddressBook {
 
-    private database: fbDatabase.Database;
+    firestore: firestore.Firestore;
 
     constructor () {
-        this.database = fbDatabase();
+        this.firestore = Firebase.firestore();
     }
 
     async AddContact(addressBookUid: string, contact: Contact) : Promise<string> {
-        const collectionRef = this.database.ref(`addressBooks/${addressBookUid}`);
-        var newContactRef = await collectionRef.push(contact);
-        return newContactRef.key;
+        const collectionRef = this.firestore.collection("addressBooks").doc(addressBookUid).collection("contacts");
+        var newContactRef = await collectionRef.add(contact);
+        return newContactRef.id;
     }
 }
 
