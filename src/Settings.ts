@@ -9,7 +9,7 @@ class Settings {
         this.jwtSecret = process.env["JWT_SECRET"];
         this.passwordPepper = process.env["PWD_PEPPER"];
         this.userDatabaseFile = process.env["DB_FILE"];
-        this.fbServiceAccount = require(process.env["FB_ACC_FILE"]);
+        this.fbServiceAccount = JSON.parse(Buffer.from(process.env["FB_ACC"], 'base64').toString());
         this.fbUrl = process.env["FB_URL"];
         this.processPort = Number(process.env["PORT"]);
     }
