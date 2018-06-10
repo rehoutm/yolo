@@ -1,8 +1,8 @@
 import Password from "./Password";
-import * as Datastore from "nedb";
 import Settings from "../Settings";
 import { promisify } from "util";
 import * as uuid from "uuid/v4";
+import { Db as MongoDb, MongoClient, Collection } from "mongodb";
 
 type UserRecord = {
     email: string;
@@ -12,32 +12,24 @@ type UserRecord = {
 
 class User {
 
-    private database: Nedb;
+    private database: MongoDb;
     private initialized: boolean;
-
-    constructor() {
-
-        //persisted DB is not working on WSL...
-        if (Settings.userDatabaseFile == "memory") {
-            this.database = new Datastore();
-        } else {
-            this.database = new Datastore({ filename: Settings.userDatabaseFile });
-        }
-    }
+    private usersCollection: Collection<UserRecord>;
 
     private async Initialize(): Promise<void> {
         if (this.initialized) {
             return;
         }
-        await promisify(this.database.loadDatabase).bind(this.database);
-        await promisify(this.database.ensureIndex).bind(this.database)({ fieldName: "email", unique: true });
+        this.database = (await MongoClient.connect(Settings.mongoUrl)).db(Settings.mongoDbName);
+        this.usersCollection = this.database.collection<UserRecord>("users");
+        await this.usersCollection.createIndex("email", { unique: true });
         this.initialized = true;
     }
 
     async Add(email: string, password: string): Promise<void> {
         await this.Initialize();
         const passwordHash = await Password.GenerateHash(password);
-        await promisify<UserRecord, UserRecord>(this.database.insert).bind(this.database)({
+        await this.usersCollection.insertOne({
             email: email,
             passwordHash: passwordHash,
             uid: uuid()
@@ -60,13 +52,8 @@ class User {
 
     private async GetUserRecord(email: string): Promise<UserRecord> {
         await this.Initialize();
-        const user = await promisify(this.GetUserRecordInternal).bind(this)(email);
+        const user = await this.usersCollection.findOne({ email: email });
         return user === null ? null : user;
-    }
-
-    //little hack to work around promisify not able to infere the right overload
-    private GetUserRecordInternal(email: string, callback: (err: Error, document: UserRecord) => void): void {
-        this.database.findOne<UserRecord>({ email: email }, callback);
     }
 }
 

@@ -8,7 +8,8 @@ class Settings {
         }
         this.jwtSecret = process.env["JWT_SECRET"];
         this.passwordPepper = process.env["PWD_PEPPER"];
-        this.userDatabaseFile = process.env["DB_FILE"];
+        this.mongoUrl = process.env["MONGO_URL"];
+        this.mongoDbName = process.env["MONGO_DB_NAME"];
         this.fbServiceAccount = JSON.parse(Buffer.from(process.env["FB_ACC"], 'base64').toString());
         this.fbUrl = process.env["FB_URL"];
         this.processPort = Number(process.env["PORT"]);
@@ -16,7 +17,8 @@ class Settings {
 
     jwtSecret: string;
     passwordPepper: string;
-    userDatabaseFile: string;
+    mongoUrl: string;
+    mongoDbName: string;
     fbServiceAccount: FBServiceAccount;
     fbUrl: string;
     processPort: number;
