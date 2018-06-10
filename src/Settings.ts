@@ -10,7 +10,12 @@ class Settings {
         this.passwordPepper = process.env["PWD_PEPPER"];
         this.mongoUrl = process.env["MONGO_URL"];
         this.mongoDbName = process.env["MONGO_DB_NAME"];
-        this.fbServiceAccount = JSON.parse(Buffer.from(process.env["FB_ACC"], 'base64').toString());
+        try {
+            this.fbServiceAccount = JSON.parse(Buffer.from(process.env["FB_ACC"], 'base64').toString());
+        } catch(err) {
+            console.log(err);
+            throw new Error("Invalid format of FB_ACC env variable - failed to load firebase service account object");
+        }
         this.fbUrl = process.env["FB_URL"];
         this.processPort = Number(process.env["PORT"]);
     }
