@@ -11,6 +11,7 @@ class Settings {
         this.userDatabaseFile = process.env["DB_FILE"];
         this.fbServiceAccount = require(process.env["FB_ACC_FILE"]);
         this.fbUrl = process.env["FB_URL"];
+        this.processPort = Number(process.env["PORT"]);
     }
 
     jwtSecret: string;
@@ -18,5 +19,6 @@ class Settings {
     userDatabaseFile: string;
     fbServiceAccount: FBServiceAccount;
     fbUrl: string;
+    processPort: number;
 }
 export default new Settings();

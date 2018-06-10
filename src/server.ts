@@ -1,5 +1,6 @@
 import app from "./App";
-const port = 4040;
+import Settings from "./Settings";
+const port = Settings.processPort;
 app.listen(port, () => {
     console.log(`Express server listening on port ${port}`);
 });
