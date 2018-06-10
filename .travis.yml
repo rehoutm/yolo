@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+- 8.11.2
+script:
+- npm run build
+branches:
+  only:
+  - master
+deploy:
+  provider: heroku
+  api_key:
+    secure: q8oPe7VGUZWweFy+nvc5SSml/7osk1Hu/wpniTxTnPJnglEmG7wAgYZAPgjjlhQR/+Z4lIFCkS3mLUWTd0TFfximf5AcZDjqsw91QxyC5+zwt4oPGnuxdepfIV1u0hR1ttFDJteCin9XpJhZv4FNLvl6ZvJcbPw5SNnEiMZl5DcQrbVaQ8QDa3MYeY5yPiFYIu6nPoMfGzqucYz72KzICR1KT/kZabd7tk3qviQ6wx0ygTWrBKxMSsb4TBHjtW/Vu+9zYI9D9wKBDoTfKU/MibCTMLK86nFrG7SjG6zqDPZtm5grbng28UKqz1yiP7k02fv0QzGJl2Fkrak6IxSIjdLJnbg3JPvMPU8y8oNiZM0F6W6IV1o6OyLdyE+KiiZshE/32V7SsfoNMFuF1HKFrY6vHqCxTVvlOER40FDFBtAAe7ZSX4Njk+lcPsgoLAJqZRO7+jhZ7+nofnopyUQvZJqcjaaUINKzRueIwN7J8AG9Orv6lkce1AhqSGk0aqSAYi28M501NQZuO7NpXzVELHJtpmDGGHQWCiflOLVL+zyLoK94TQvdP/RrunO1zblBbwA1xEXLPD/6EAuAn26w6xJm+Qh+EyKCoMFAK8cj1Z+e4X0/zaJNMWmjASTdBObe/Q4p1+q/5Nnj1OSPojsccoz1L1JTzCyrXOd8AW9DXUw=
+  app: yo-yolo
+  on:
+    repo: rehoutm/yolo
+cache:
+  directories:
+    - "node_modules"
