@@ -5,14 +5,19 @@ import UsersRouter from "./Routes/UsersRouter";
 
 class App {
 
-    public app: express.Application;
+    public static app: express.Application;
 
-    constructor() {
-        this.app = express();
-        this.app.use(bodyParser.json());
-        this.app.use("/contacts", (req, res, next) => ContactsRouter(req, res, next));
-        this.app.use("/users", (req, res, next) => UsersRouter(req, res, next));
+    public static GetInstance(): express.Application {
+        App.app = App.app || App.Init();
+        return App.app;
+    }
+    private static Init(): express.Application {
+        const app = express();
+        app.use(bodyParser.json());
+        app.use("/contacts", (req, res, next) => ContactsRouter(req, res, next));
+        app.use("/users", (req, res, next) => UsersRouter(req, res, next));
+        return app;
     }
 }
 
-export default new App().app;
+export default App.GetInstance;

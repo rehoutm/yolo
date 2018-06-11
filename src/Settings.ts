@@ -3,6 +3,13 @@ import { ServiceAccount as FBServiceAccount } from "firebase-admin";
 
 class Settings {
 
+    public static getInstance(): Settings {
+        Settings.instance = Settings.instance || new Settings();
+        return Settings.instance;
+    }
+
+    private static instance: Settings;
+
     public jwtSecret: string;
     public passwordPepper: string;
     public mongoUrl: string;
@@ -10,6 +17,9 @@ class Settings {
     public fbServiceAccount: FBServiceAccount;
     public fbUrl: string;
     public processPort: number;
+
+    private constructor() {
+    }
 
     public InitializeFromEnv(): void {
         /* tslint:disable:no-string-literal */
@@ -32,4 +42,4 @@ class Settings {
     }
 }
 
-export default new Settings();
+export default Settings.getInstance();
