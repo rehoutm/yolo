@@ -1,6 +1,6 @@
 import Settings from "./Settings";
 Settings.InitializeFromEnv();
-//settings must be initialized before anything else
+// settings must be initialized before anything else
 
 import appInit from "./App";
 const app = appInit();
