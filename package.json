@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "tsc -p ./",
+    "lint": "./node_modules/tslint/bin/tslint -c tslint.json 'src/**/*.ts'",
     "start": "node dist/server.js"
   },
   "author": "",
@@ -35,6 +36,7 @@
     "grunt-cli": "^1.2.0",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-ts": "^6.0.0-beta.19",
+    "tslint": "^5.10.0",
     "typescript": "^2.9.1"
   }
 }

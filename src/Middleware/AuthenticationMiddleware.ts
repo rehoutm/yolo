@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { verify as jwtVerify, JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
+import { NextFunction, Request, Response } from "express";
+import { JsonWebTokenError, NotBeforeError, TokenExpiredError, verify as jwtVerify } from "jsonwebtoken";
 import Settings from "../Settings";
 
 export default class AuthenticationMiddleware {
@@ -10,14 +10,14 @@ export default class AuthenticationMiddleware {
         this.jwtSecret = Settings.jwtSecret;
     }
 
-    Handle(req: Request, res: Response, next: NextFunction): void {
-        const authHeader = <string>req.headers["authorization"];
+    public Handle(req: Request, res: Response, next: NextFunction): void {
+        const authHeader = req.headers.authorization as string;
         if (!authHeader) {
             res.status(401).send({ error: "Authorization header missing" });
             return;
         }
-        const headerParts = authHeader.split(' ');
-        if (headerParts.length != 2 || headerParts[0] !== "Bearer") {
+        const headerParts = authHeader.split(" ");
+        if (headerParts.length !== 2 || headerParts[0] !== "Bearer") {
             res.status(401).send({ error: "Authorization: Bearer expected" });
             return;
         }

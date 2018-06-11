@@ -1,9 +1,11 @@
-import * as express from "express";
 import * as bodyParser from "body-parser";
-import UsersRouter from "./Routes/UsersRouter";
+import * as express from "express";
 import ContactsRouter from "./Routes/ContactsRouter";
+import UsersRouter from "./Routes/UsersRouter";
 
 class App {
+
+    public app: express.Application;
 
     constructor() {
         this.app = express();
@@ -12,7 +14,6 @@ class App {
         this.app.use("/users", (req, res, next) => UsersRouter(req, res, next));
     }
 
-    app: express.Application;
 }
 
 export default new App().app;

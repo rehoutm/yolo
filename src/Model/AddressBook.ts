@@ -1,23 +1,23 @@
-import Firebase from "../Firebase";
 import { firestore } from "firebase-admin";
+import Firebase from "../Firebase";
 
-export type Contact = {
-    name: string,
-    email: string,
-    phone: string
+export interface IContact {
+    name: string;
+    email: string;
+    phone: string;
 }
 
 class AddressBook {
 
-    firestore: firestore.Firestore;
+    public firestore: firestore.Firestore;
 
-    constructor () {
+    constructor() {
         this.firestore = Firebase.firestore();
     }
 
-    async AddContact(addressBookUid: string, contact: Contact) : Promise<string> {
+    public async AddContact(addressBookUid: string, contact: IContact): Promise<string> {
         const collectionRef = this.firestore.collection("addressBooks").doc(addressBookUid).collection("contacts");
-        var newContactRef = await collectionRef.add(contact);
+        const newContactRef = await collectionRef.add(contact);
         return newContactRef.id;
     }
 }

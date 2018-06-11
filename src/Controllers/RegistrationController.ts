@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import User from "../Model/User";
 import { MongoError } from "mongodb";
+import User from "../Model/User";
 
 export default class RegistrationController {
 
-    async HandlePost(req: Request, res: Response) {
+    public async HandlePost(req: Request, res: Response) {
         try {
             await User.Add(req.body.email, req.body.password);
             res.status(201).send({ message: "Account created, session can be created now" });

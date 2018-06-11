@@ -1,12 +1,12 @@
 import { Router } from "express";
-import SessionController from "../Controllers/SessionController";
-import RegistrationController from "../Controllers/RegistrationController";
 import { body } from "express-validator/check";
+import RegistrationController from "../Controllers/RegistrationController";
+import SessionController from "../Controllers/SessionController";
 import { HandleErrors } from "../Middleware/ValidationErrorsHandler";
 
 class UsersRouter {
 
-    router: Router;
+    public router: Router;
     private sessionController: SessionController;
     private registrationController: RegistrationController;
 
@@ -17,7 +17,7 @@ class UsersRouter {
         this.router.post("/session", [
             body("email", "Valid email address is required").isEmail(),
             body("password", "Password is required").not().isEmpty(),
-            HandleErrors
+            HandleErrors,
         ], async (req, res) => await this.sessionController.HandlePost(req, res));
         this.router.post("/registration", [
             body("email", "Valid email address is required").isEmail(),
@@ -30,7 +30,7 @@ class UsersRouter {
                     return value;
                 }
             }),
-            HandleErrors
+            HandleErrors,
         ], async (req, res) => await this.registrationController.HandlePost(req, res));
     }
 }

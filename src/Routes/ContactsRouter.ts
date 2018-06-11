@@ -1,12 +1,12 @@
 import { Router } from "express";
-import AuthenticationMiddleware from "../Middleware/AuthenticationMiddleware";
-import ContactsController from "../Controllers/ContactsController";
-import { HandleErrors } from "../Middleware/ValidationErrorsHandler";
 import { body } from "express-validator/check";
+import ContactsController from "../Controllers/ContactsController";
+import AuthenticationMiddleware from "../Middleware/AuthenticationMiddleware";
+import { HandleErrors } from "../Middleware/ValidationErrorsHandler";
 
 class ContactsRouter {
 
-    router: Router;
+    public router: Router;
     private contactsController: ContactsController;
 
     constructor() {
@@ -18,7 +18,7 @@ class ContactsRouter {
             body("name").not().isEmpty(),
             body("email").optional().isEmail(),
             body("phone").optional().isMobilePhone("any"),
-            HandleErrors
+            HandleErrors,
         ], async (req, res) => await this.contactsController.HandlePost(req, res));
     }
 }

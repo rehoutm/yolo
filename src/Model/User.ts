@@ -1,10 +1,10 @@
-import Password from "./Password";
-import Settings from "../Settings";
+import { Collection, Db as MongoDb, MongoClient } from "mongodb";
 import { promisify } from "util";
 import * as uuid from "uuid/v4";
-import { Db as MongoDb, MongoClient, Collection } from "mongodb";
+import Settings from "../Settings";
+import Password from "./Password";
 
-type UserRecord = {
+interface IUserRecord {
     email: string;
     passwordHash: string;
     uid: string;
@@ -14,29 +14,19 @@ class User {
 
     private database: MongoDb;
     private initialized: boolean;
-    private usersCollection: Collection<UserRecord>;
+    private usersCollection: Collection<IUserRecord>;
 
-    private async Initialize(): Promise<void> {
-        if (this.initialized) {
-            return;
-        }
-        this.database = (await MongoClient.connect(Settings.mongoUrl)).db(Settings.mongoDbName);
-        this.usersCollection = this.database.collection<UserRecord>("users");
-        await this.usersCollection.createIndex("email", { unique: true });
-        this.initialized = true;
-    }
-
-    async Add(email: string, password: string): Promise<void> {
+    public async Add(email: string, password: string): Promise<void> {
         await this.Initialize();
         const passwordHash = await Password.GenerateHash(password);
         await this.usersCollection.insertOne({
-            email: email,
-            passwordHash: passwordHash,
-            uid: uuid()
+            email,
+            passwordHash,
+            uid: uuid(),
         });
     }
 
-    async Login(email: string, password: string): Promise<UserRecord> {
+    public async Login(email: string, password: string): Promise<IUserRecord> {
         if (!email || !password) {
             return null;
         }
@@ -50,9 +40,19 @@ class User {
         return null;
     }
 
-    private async GetUserRecord(email: string): Promise<UserRecord> {
+    private async Initialize(): Promise<void> {
+        if (this.initialized) {
+            return;
+        }
+        this.database = (await MongoClient.connect(Settings.mongoUrl)).db(Settings.mongoDbName);
+        this.usersCollection = this.database.collection<IUserRecord>("users");
+        await this.usersCollection.createIndex("email", { unique: true });
+        this.initialized = true;
+    }
+
+    private async GetUserRecord(email: string): Promise<IUserRecord> {
         await this.Initialize();
-        const user = await this.usersCollection.findOne({ email: email });
+        const user = await this.usersCollection.findOne({ email });
         return user === null ? null : user;
     }
 }

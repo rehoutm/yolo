@@ -1,4 +1,4 @@
-import { verify as argonVerify, hash as argonHash } from "argon2";
+import { hash as argonHash, verify as argonVerify } from "argon2";
 import Settings from "../Settings";
 
 class Password {
@@ -9,12 +9,12 @@ class Password {
         this.pepper = Settings.passwordPepper;
     }
 
-    async Verify(password: string, hash: string): Promise<boolean> {
+    public async Verify(password: string, hash: string): Promise<boolean> {
         const seasonedPwd = this.GetSeasoned(password);
         return await argonVerify(hash, seasonedPwd);
     }
 
-    async GenerateHash(password: string): Promise<string> {
+    public async GenerateHash(password: string): Promise<string> {
         const seasonedPwd = this.GetSeasoned(password);
         return await argonHash(seasonedPwd);
     }
