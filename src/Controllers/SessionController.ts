@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { sign as jwtSign } from "jsonwebtoken";
-import Firebase from "../Firebase";
+import { getFirebase } from "../Firebase";
 import User from "../Model/User";
 import Settings from "../Settings";
 
@@ -29,7 +29,7 @@ export default class SessionController {
     }
 
     private async CreateToken(email: string, userUid: string): Promise<string> {
-        const fbToken = await Firebase.auth().createCustomToken(userUid);
+        const fbToken = await getFirebase().auth().createCustomToken(userUid);
         return jwtSign({ email, uid: userUid, fbToken }, this.jwtSecret, {
             expiresIn: 3600,
         });

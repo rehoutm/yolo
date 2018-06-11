@@ -11,7 +11,7 @@ class Settings {
     public fbUrl: string;
     public processPort: number;
 
-    constructor() {
+    public InitializeFromEnv(): void {
         /* tslint:disable:no-string-literal */
         if (process.env["NODE_ENV"] !== "production") {
             dotEnvLoad();

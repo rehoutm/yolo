@@ -2,7 +2,7 @@ import { Collection, Db as MongoDb, MongoClient } from "mongodb";
 import { promisify } from "util";
 import * as uuid from "uuid/v4";
 import Settings from "../Settings";
-import Password from "./Password";
+import { Password } from "./Password";
 
 interface IUserRecord {
     email: string;
@@ -15,10 +15,15 @@ class User {
     private database: MongoDb;
     private initialized: boolean;
     private usersCollection: Collection<IUserRecord>;
+    private password: Password;
+
+    constructor() {
+        this.password = new Password(Settings.passwordPepper);
+    }
 
     public async Add(email: string, password: string): Promise<void> {
         await this.Initialize();
-        const passwordHash = await Password.GenerateHash(password);
+        const passwordHash = await this.password.GenerateHash(password);
         await this.usersCollection.insertOne({
             email,
             passwordHash,
@@ -34,7 +39,7 @@ class User {
         if (userRecord === null) {
             return null;
         }
-        if (await Password.Verify(password, userRecord.passwordHash)) {
+        if (await this.password.Verify(password, userRecord.passwordHash)) {
             return userRecord;
         }
         return null;

@@ -6,8 +6,8 @@ export default class AuthenticationMiddleware {
 
     private jwtSecret: string;
 
-    constructor() {
-        this.jwtSecret = Settings.jwtSecret;
+    constructor(jwtSecret?: string) {
+        this.jwtSecret = jwtSecret || Settings.jwtSecret;
     }
 
     public Handle(req: Request, res: Response, next: NextFunction): void {

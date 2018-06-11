@@ -13,7 +13,6 @@ class App {
         this.app.use("/contacts", (req, res, next) => ContactsRouter(req, res, next));
         this.app.use("/users", (req, res, next) => UsersRouter(req, res, next));
     }
-
 }
 
 export default new App().app;

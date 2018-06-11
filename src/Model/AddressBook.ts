@@ -1,5 +1,5 @@
 import { firestore } from "firebase-admin";
-import Firebase from "../Firebase";
+import { getFirebase } from "../Firebase";
 
 export interface IContact {
     name: string;
@@ -7,12 +7,12 @@ export interface IContact {
     phone: string;
 }
 
-class AddressBook {
+export class AddressBook {
 
     public firestore: firestore.Firestore;
 
     constructor() {
-        this.firestore = Firebase.firestore();
+        this.firestore = getFirebase().firestore();
     }
 
     public async AddContact(addressBookUid: string, contact: IContact): Promise<string> {
@@ -21,5 +21,3 @@ class AddressBook {
         return newContactRef.id;
     }
 }
-
-export default new AddressBook();

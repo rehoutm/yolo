@@ -1,12 +1,11 @@
 import { hash as argonHash, verify as argonVerify } from "argon2";
-import Settings from "../Settings";
 
-class Password {
+export class Password {
 
     private pepper: string;
 
-    constructor() {
-        this.pepper = Settings.passwordPepper;
+    constructor(passwordPepper: string) {
+        this.pepper = passwordPepper;
     }
 
     public async Verify(password: string, hash: string): Promise<boolean> {
@@ -23,5 +22,3 @@ class Password {
         return password + this.pepper;
     }
 }
-
-export default new Password();
