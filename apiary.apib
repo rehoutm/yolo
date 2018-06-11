@@ -1,80 +1,212 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: https://yo-yolo.herokuapp.com/
 
 # yo-yolo
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Yo-Yolo is a REST API backend for an addressbook application running on any platform.
 
-## Questions Collection [/questions]
+## Typical process flow:
 
-### List All Questions [GET]
+1. Create user account using the [users registration endpoint](#UsersRegistration)
+2. Create user session (log in) using the [users session endpoint](#UsersRegistration). Created session provides a JWT token that is used for authenticated resources.
+    - token payload UID contains user identification that is used to identify user data in FireBase
+    - token payload fbToken contains FB custm token that is used to authenticate with FireBase
+3. Create addressbook contacts using the [contact endpoint](#AddressbookContact)
+4. Client applications can now read the contacts collection directly from FireBase cloud Firestore, using the FB custom token provided in step 2.
+    - FB database URL is `https://yo-yolo.firebaseio.com`
+    - FB keeps the contacts structured in subcollections for each user
+    - User contacts collection is located in FB at `addressBooks/{user UID}/contacts`
 
-+ Response 200 (application/json)
+# Group Users
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
+## Users Registration Endpoint [/users/registration]
+<a name="UsersRegistration"></a>
+### Create registration [POST]
++ Request Create registration (application/json)
 
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
+    + Attributes (object)
+        + email (string, required) - user email
+        + password (string, required) - user password
+        + passwordCheck (string, required) - user password check - must be equal to password
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+                "email": "user email",
+                "password": "password",
+                "passwordCheck": "password"
+            }
+
++ Response 201 (application/json)
+
+    Account created, session can be created now
+
+    + Body
+
+            {
+                "message": "string"
+            }
+
++ Response 409 (application/json) 
+    
+    An account with given email already exists
+    
+    + Body
+    
+            {
+                "error": "string"
+            }
+
++ Response 422 (application/json)
+
+    Body validation failed, see response for details
+    
+    + Body
+    
+            {
+               "errors": [
+                  {
+                     "location": "body",
+                     "param": "Invalid param name",
+                     "msg": "Invalidity reason"
+                  }
+               ]
+            }
+
++ Response 500 (application/json)
+
+    Server error, failed to create the account
+    
+    + Body
+    
+            {
+                "error": "string"
+            }
+            
+## Users Session Endpoint [/users/session]
+<a name="UsersSession"></a>
+
+### Create session [POST]
+
++ Request Create registration (application/json)
+
+    + Attributes (object)
+        + email (string, required) - user email
+        + password (string, required) - user password
+
+    + Body
+
+            {
+                "email": "user email",
+                "password": "password"
+            }
+
++ Response 201
+
+    Session created, Authorization header provides Bearer token for calling authenticated endpoints.
+    Also, the token payloda contains values to be used by clients to read data from Firebas:
+    - `fbToken` - FireBase custom auth token to be used for client apps' Firebase authentication
+    - `uid` - users unique identifier used to locate collection containing user's stored contacts
+
+    + Header
+    
+            Authorization: Bearer JWT
+        
+
++ Response 401 (application/json) 
+    
+    Invalid credentials
+    
+    + Body
+    
+            {
+                "error": "string"
+            }
+
++ Response 422 (application/json)
+
+    Body validation failed, see response for details
+    
+    + Body
+    
+            {
+               "errors": [
+                  {
+                     "location": "body",
+                     "param": "Invalid param name",
+                     "msg": "Invalidity reason"
+                  }
+               ]
+            }
+
++ Response 500 (application/json)
+
+    Server error, failed to create the account
+    
+    + Body
+    
+            {
+                "error": "string"
+            }
+        
+# Group Contacts
+
+## Addressbook contacts endpoint [/contacts]
+<a name="AddressbookContact"></a>
+### Create contact [POST]
+
++ Request Create registration (application/json)
+
+    + Headers
+
+            Authentication: Bearer JWT
+            
+    + Attributes (object)
+        + name (string, required) - Contact name
+        + email (string) - contact email
+        + phone (string) - contact phone
+
+    + Body
+
+            {
+                "name": "contact name"
+                "email": "email address",
+                "phone": "phone number"
+            }
+            
++ Response 201 (application/json)
+
+    Contact created, response contains its FireBase key
+
+    + Body
+
+            {
+                "message": "string",
+                "key": "created contact key"
+            }
+            
++ Response 422 (application/json)
+
+    Body validation failed, see response for details
+    
+    + Body
+    
+            {
+               "errors": [
+                  {
+                     "location": "body",
+                     "param": "Invalid param name",
+                     "msg": "Invalidity reason"
+                  }
+               ]
+            }
+
++ Response 500 (application/json)
+
+    Server error, failed to create the account
+    
+    + Body
+    
+            {
+                "error": "string"
             }
