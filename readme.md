@@ -60,20 +60,20 @@ When required, the project is ready for a CI/CD solution utilizing TravisCI and 
 
 Setup accounts for both Heroku and TravisCI, install TravisCI CLI tools.
 
-Follow the [instructions](https://docs.travis-ci.com/user/deployment/heroku/) to integrate both service, easiest way is to run the setup tool `travis setup heroku`.
+Follow the [instructions](https://docs.travis-ci.com/user/deployment/heroku/) to integrate both services, easiest way is to run the setup tool `travis setup heroku`.
 
-Last thing to do is to set up ENV variables in Heroku. This is easily done via [Heroku dashboard](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard). The variables needed are defined by the local `.env` file.
+Last thing to do is to set up ENV variables in Heroku. This can be easily done via [Heroku dashboard](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard). The variables needed are defined by the local `.env` file.
 
 # Bottom line, development notes
 
 ## How it went, glitches, problems
 
-- First pick for user accounts storage was [NeDB](https://github.com/louischatriot/nedb), in the end it didn't really work with Heroku. Changed to MongoDB.
+- First pick for user accounts storage was [NeDB](https://github.com/louischatriot/nedb), in the end it didn't really work with Heroku due to its ephemeral FS. Changed to MongoDB.
 - Unit tests - tried various frameworks for mocking, in the end [sinon](https://github.com/sinonjs/sinon) was most straightforward.
 - Unit tests - I did not try to do some crazy code coverage with the tests, rather tried to exercise different scenarios of unit testing.
 - Coming from .NET world, where DI/IoC is a thing, I am still not convinced whether the module way is any better.
 - All the options of how to write stuff (in Java/C#, nearly everything is basically a class, an object, grouped in namespaces and defined by interfaces) seems a bit overwhelming.
-	- Some things works better than other, in the I found testability may be the biggest factor in how to export/init stuff.
+	- Some things work better than other, in the end I found testability may be the biggest factor in how to export/init stuff.
 	- Maybe, if testability is the real subject, DI may come to play even for Node.js apps.
 - TypeScript makes some things better (basically, stuff is more likely to work, if it compiles - which is a nice thing, coming from the MSBuild world of C#).
 - But TypeScript also makes some things worse, by increasing the complexity/options of exporting/importing modules.
