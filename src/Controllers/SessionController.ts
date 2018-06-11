@@ -17,7 +17,8 @@ export default class SessionController {
             const userRecord = await User.Login(req.body.email, req.body.password);
             if (userRecord !== null) {
                 const token = `Bearer ${await this.CreateToken(req.body.email, userRecord.uid)}`;
-                res.status(201).set("Authorization", token).send();
+                // tslint:disable-next-line:max-line-length
+                res.status(201).set("Authorization", token).send({ message: "Session created, use JWT provided in Authorization header for authenticated requests." });
             } else {
                 res.status(401).send({ error: "Invalid credentials" });
             }
