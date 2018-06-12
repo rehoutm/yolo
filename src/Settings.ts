@@ -17,6 +17,7 @@ class Settings {
     public fbServiceAccount: FBServiceAccount;
     public fbUrl: string;
     public processPort: number;
+    public documentationURL: string;
 
     private constructor() {
     }
@@ -38,6 +39,7 @@ class Settings {
         }
         this.fbUrl = process.env["FB_URL"];
         this.processPort = Number(process.env["PORT"]);
+        this.documentationURL = process.env["DOCS_URL"];
         /* tslint:enable:no-string-literal */
     }
 }
