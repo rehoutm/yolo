@@ -1,3 +1,4 @@
+import * as AsyncLock from "async-lock";
 import { Collection, Db as MongoDb, MongoClient } from "mongodb";
 import { promisify } from "util";
 import * as uuid from "uuid/v4";
@@ -12,13 +13,16 @@ interface IUserRecord {
 
 class User {
 
+    private static readonly lockKey = "user_init_lock";
     private database: MongoDb;
     private initialized: boolean;
     private usersCollection: Collection<IUserRecord>;
     private password: Password;
+    private initLock: AsyncLock;
 
     constructor() {
         this.password = new Password(Settings.passwordPepper);
+        this.initLock = new AsyncLock();
     }
 
     public async Add(email: string, password: string): Promise<void> {
@@ -49,10 +53,16 @@ class User {
         if (this.initialized) {
             return;
         }
-        this.database = (await MongoClient.connect(Settings.mongoUrl)).db(Settings.mongoDbName);
-        this.usersCollection = this.database.collection<IUserRecord>("users");
-        await this.usersCollection.createIndex("email", { unique: true });
-        this.initialized = true;
+        await this.initLock.acquire(User.lockKey, async () => {
+            // double-checked locking
+            if (this.initialized) {
+                return;
+            }
+            this.database = (await MongoClient.connect(Settings.mongoUrl)).db(Settings.mongoDbName);
+            this.usersCollection = this.database.collection<IUserRecord>("users");
+            await this.usersCollection.createIndex("email", { unique: true });
+            this.initialized = true;
+        });
     }
 
     private async GetUserRecord(email: string): Promise<IUserRecord> {
