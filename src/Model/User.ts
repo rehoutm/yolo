@@ -26,7 +26,6 @@ class User {
     }
 
     public async Add(email: string, password: string): Promise<void> {
-        await this.Initialize();
         const passwordHash = await this.password.GenerateHash(password);
         await this.usersCollection.insertOne({
             email,
@@ -49,7 +48,7 @@ class User {
         return null;
     }
 
-    private async Initialize(): Promise<void> {
+    public async Initialize(): Promise<void> {
         if (this.initialized) {
             return;
         }
@@ -66,7 +65,6 @@ class User {
     }
 
     private async GetUserRecord(email: string): Promise<IUserRecord> {
-        await this.Initialize();
         const user = await this.usersCollection.findOne({ email });
         return user === null ? null : user;
     }
